@@ -360,6 +360,14 @@ layer_0/y_sort_enabled = true
 layer_0/tile_data = PackedInt32Array(65535, 1114113, 8, 131071, 1114113, 8, 131072, 1114113, 8, 196608, 1114113, 8, 131073, 1114113, 8, 65537, 1114113, 8, 1, 1114113, 8, -65536, 1114113, 8, -131072, 1114113, 8, -1, 1114113, 8, 0, 917505, 2, 65536, 917505, 2, 196607, 1114113, 8, 262143, 1114113, 8, 196609, 1114113, 8, -65535, 1114113, 8, -131071, 1114113, 8, -65537, 1114113, 8, 65540, 1114113, 8, 65541, 1114113, 8)
 script = ExtResource("2_27pqt")
 
+[node name="selection" type="Sprite2D" parent="tilemap"]
+y_sort_enabled = true
+texture = ExtResource("1_kxtnu")
+centered = false
+offset = Vector2(-16, -20)
+region_enabled = true
+region_rect = Rect2(544, 128, 32, 32)
+
 [node name="camera" type="Camera2D" parent="."]
 position_smoothing_enabled = true
 script = ExtResource("2_217jn")
