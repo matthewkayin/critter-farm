@@ -22,7 +22,6 @@ func _process(_delta):
     elif selecting and Input.is_action_pressed("left_click"):
         var mouse_position = get_global_mouse_position()
         select_rect = Rect2(select_origin, mouse_position - select_origin if mouse_position != select_origin else Vector2(1, 1)).abs()
-        selecting = true
         queue_redraw()
     elif Input.is_action_just_released("left_click"):
         selecting = false

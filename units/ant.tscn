@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://bfiwb35evfer5"]
+[gd_scene load_steps=16 format=3 uid="uid://bfiwb35evfer5"]
 
 [ext_resource type="Script" path="res://units/ant.gd" id="1_wybch"]
 [ext_resource type="Shader" path="res://units/outline.gdshader" id="2_6gjvs"]
@@ -103,10 +103,7 @@ animations = [{
 "speed": 10.0
 }]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_sdqb5"]
-size = Vector2(26, 17)
-
-[node name="ant" type="Area2D"]
+[node name="ant" type="Node2D"]
 texture_filter = 1
 script = ExtResource("1_wybch")
 
@@ -114,12 +111,3 @@ script = ExtResource("1_wybch")
 material = SubResource("ShaderMaterial_uo60a")
 sprite_frames = SubResource("SpriteFrames_pmxu8")
 animation = &"idle_front"
-centered = false
-offset = Vector2(0, -8)
-
-[node name="collider" type="CollisionShape2D" parent="."]
-position = Vector2(16, 6.5)
-shape = SubResource("RectangleShape2D_sdqb5")
-
-[node name="Node2D" type="Node2D" parent="."]
-position = Vector2(3, -2)

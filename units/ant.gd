@@ -32,7 +32,7 @@ func _ready():
     tilemap.astar_set_point_disabled(current_cell, true)
 
 func get_rect() -> Rect2:
-    return Rect2(position + Vector2(3, -2), Vector2(26, 17))
+    return Rect2(position - Vector2(11.5, 8.5), Vector2(26, 17))
 
 func _process(delta):
     # Movement

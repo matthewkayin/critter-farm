@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://cdnyn5ikkf8p0" path="res://tiles.png" id="1_kxtnu"]
 [ext_resource type="Script" path="res://tilemap.gd" id="2_27pqt"]
 [ext_resource type="Script" path="res://camera.gd" id="2_217jn"]
-[ext_resource type="Script" path="res://ui.gd" id="2_dc58q"]
+[ext_resource type="Script" path="res://select_rect.gd" id="2_dc58q"]
 [ext_resource type="PackedScene" uid="uid://bfiwb35evfer5" path="res://units/ant.tscn" id="4_qptlh"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_hfb6l"]
@@ -379,7 +379,7 @@ script = ExtResource("2_217jn")
 [node name="ant" parent="." instance=ExtResource("4_qptlh")]
 
 [node name="ant2" parent="." instance=ExtResource("4_qptlh")]
-position = Vector2(-48, 8)
+position = Vector2(48, 24)
 
 [node name="ant3" parent="." instance=ExtResource("4_qptlh")]
 position = Vector2(-32, 32)

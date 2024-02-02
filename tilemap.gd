@@ -37,8 +37,6 @@ func _ready():
                 continue
             astar.connect_points(astar_point_id_lookup[cell], astar_point_id_lookup[child])
 
-    start_selecting()
-
 func update_tile_edges():
     for cell in get_used_cells(LAYER_TILE):
         var tile_data = get_cell_tile_data(LAYER_TILE, cell)
@@ -100,18 +98,14 @@ func get_mouse_cell():
 
 func astar_get_path(from: Vector2i, to: Vector2i):
     var from_id = astar_point_id_lookup[from]
-    var from_disabled = astar.is_point_disabled(from_id)
-    if from_disabled:
-        astar.set_point_disabled(from_id, false)
     var to_id = astar_point_id_lookup[to]
     var to_disabled = astar.is_point_disabled(to_id)
     if to_disabled:
         astar.set_point_disabled(to_id, false)
 
     var path = astar.get_point_path(from_id, to_id)
+    path.remove_at(0)
 
-    if from_disabled:
-        astar.set_point_disabled(from_id, true)
     if to_disabled:
         astar.set_point_disabled(to_id, true)
     
@@ -121,4 +115,4 @@ func astar_set_point_disabled(point: Vector2i, value: bool):
     astar.set_point_disabled(astar_point_id_lookup[point], value)
 
 func astar_is_point_disabled(point: Vector2i):
-    astar.is_point_disabled(astar_point_id_lookup[point])
+    return astar.is_point_disabled(astar_point_id_lookup[point])
