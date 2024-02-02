@@ -10,6 +10,9 @@ var grass_tiles = {}
 var selecting = false
 var selected_tile = null
 
+var astar: AStar2D
+var astar_point_id_lookup = {}
+
 func _ready():
     for i in range(-3, 3):
         grass_tiles[i] = {}
@@ -21,6 +24,20 @@ func _ready():
             grass_tiles[tile_data.get_custom_data("moisture")][tile_data.get_custom_data("offset")] = atlas_coords
     update_tile_edges()
     selection.visible = false
+
+    astar = AStar2D.new()
+    for cell in get_used_cells(LAYER_TILE):
+        var point_id = astar.get_available_point_id()
+        astar.add_point(point_id, Vector2(cell))
+        astar_point_id_lookup[cell] = point_id
+    for cell in get_used_cells(LAYER_TILE):
+        for neighbor_offset in NEIGHBOR_OFFSET:
+            var child = cell + neighbor_offset
+            if not astar_point_id_lookup.has(child): 
+                continue
+            astar.connect_points(astar_point_id_lookup[cell], astar_point_id_lookup[child])
+
+    start_selecting()
 
 func update_tile_edges():
     for cell in get_used_cells(LAYER_TILE):
@@ -55,24 +72,53 @@ func start_selecting():
 
 func _process(_delta):
     if selecting:
-        var mouse_position = get_global_mouse_position()
-        selected_tile = null
-        for cell in get_used_cells(LAYER_TILE):
-            var cell_center = map_to_local(cell)
-            var relative_mouse_position = mouse_position - cell_center
-            var mouse_inside_cell = (abs(relative_mouse_position.x) * 9.0) + (abs(relative_mouse_position.y) * 16.0) <= 9.0 * 16.0
-            if mouse_inside_cell:
-                selected_tile = cell
-                var cell_atlas_coords
-                var cell_tile_data = get_cell_tile_data(LAYER_TILE, cell)
-                if cell_tile_data.get_custom_data("is_grass"):
-                    cell_atlas_coords = grass_tiles[cell_tile_data.get_custom_data("moisture")][Vector2i(2, 2)]
-                else:
-                    cell_atlas_coords = get_cell_atlas_coords(LAYER_TILE, cell)
-                selection.region_rect.position = Vector2(cell_atlas_coords.x * 32, cell_atlas_coords.y * 16)
-                break
+        selected_tile = get_mouse_cell()
     if selecting and selected_tile != null:
+        var cell_atlas_coords
+        var cell_tile_data = get_cell_tile_data(LAYER_TILE, selected_tile)
+        if cell_tile_data.get_custom_data("is_grass"):
+            cell_atlas_coords = grass_tiles[cell_tile_data.get_custom_data("moisture")][Vector2i(2, 2)]
+        else:
+            cell_atlas_coords = get_cell_atlas_coords(LAYER_TILE, selected_tile)
+        selection.region_rect.position = Vector2(cell_atlas_coords.x * 32, cell_atlas_coords.y * 16)
         selection.position = map_to_local(selected_tile)
         selection.visible = true
     else:
         selection.visible = false
+
+func get_mouse_cell():
+    var mouse_position = get_global_mouse_position()
+    for cell in get_used_cells(LAYER_TILE):
+        var cell_center = map_to_local(cell)
+        var relative_mouse_position = mouse_position - cell_center
+        var mouse_inside_cell = (abs(relative_mouse_position.x) * 9.0) + (abs(relative_mouse_position.y) * 16.0) <= 9.0 * 16.0
+        if mouse_inside_cell:
+            return cell
+    return null
+
+# Pathfinding
+
+func astar_get_path(from: Vector2i, to: Vector2i):
+    var from_id = astar_point_id_lookup[from]
+    var from_disabled = astar.is_point_disabled(from_id)
+    if from_disabled:
+        astar.set_point_disabled(from_id, false)
+    var to_id = astar_point_id_lookup[to]
+    var to_disabled = astar.is_point_disabled(to_id)
+    if to_disabled:
+        astar.set_point_disabled(to_id, false)
+
+    var path = astar.get_point_path(from_id, to_id)
+
+    if from_disabled:
+        astar.set_point_disabled(from_id, true)
+    if to_disabled:
+        astar.set_point_disabled(to_id, true)
+    
+    return path
+
+func astar_set_point_disabled(point: Vector2i, value: bool):
+    astar.set_point_disabled(astar_point_id_lookup[point], value)
+
+func astar_is_point_disabled(point: Vector2i):
+    astar.is_point_disabled(astar_point_id_lookup[point])

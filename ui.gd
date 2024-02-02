@@ -16,7 +16,6 @@ func _process(_delta):
         return
     if Input.is_action_just_pressed("left_click"):
         select_origin = get_global_mouse_position()
-        print(select_origin)
         select_rect = Rect2(select_origin, Vector2(1, 1))
         selecting = true
         queue_redraw()
