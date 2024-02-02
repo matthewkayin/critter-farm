@@ -20,7 +20,12 @@ func _ready():
         if tile_data.get_custom_data("is_grass"):
             grass_tiles[tile_data.get_custom_data("moisture")][tile_data.get_custom_data("offset")] = atlas_coords
     update_tile_edges()
-    start_selecting()
+    selection.visible = false
+    for i in range(0, 5):
+        print(map_to_local(Vector2i(i, 0)))
+    print("--")
+    for i in range(0, 5):
+        print(map_to_local(Vector2i(0, i)))
 
 func update_tile_edges():
     for cell in get_used_cells(LAYER_TILE):
@@ -63,7 +68,12 @@ func _process(_delta):
             var mouse_inside_cell = (abs(relative_mouse_position.x) * 9.0) + (abs(relative_mouse_position.y) * 16.0) <= 9.0 * 16.0
             if mouse_inside_cell:
                 selected_tile = cell
-                var cell_atlas_coords = get_cell_atlas_coords(LAYER_TILE, cell)
+                var cell_atlas_coords
+                var cell_tile_data = get_cell_tile_data(LAYER_TILE, cell)
+                if cell_tile_data.get_custom_data("is_grass"):
+                    cell_atlas_coords = grass_tiles[cell_tile_data.get_custom_data("moisture")][Vector2i(2, 2)]
+                else:
+                    cell_atlas_coords = get_cell_atlas_coords(LAYER_TILE, cell)
                 selection.region_rect.position = Vector2(cell_atlas_coords.x * 32, cell_atlas_coords.y * 16)
                 break
     if selecting and selected_tile != null:
