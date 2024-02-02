@@ -21,11 +21,6 @@ func _ready():
             grass_tiles[tile_data.get_custom_data("moisture")][tile_data.get_custom_data("offset")] = atlas_coords
     update_tile_edges()
     selection.visible = false
-    for i in range(0, 5):
-        print(map_to_local(Vector2i(i, 0)))
-    print("--")
-    for i in range(0, 5):
-        print(map_to_local(Vector2i(0, i)))
 
 func update_tile_edges():
     for cell in get_used_cells(LAYER_TILE):
