@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://bcfvjedew5uq8"]
+[gd_scene load_steps=17 format=3 uid="uid://bcfvjedew5uq8"]
 
 [ext_resource type="Script" path="res://world.gd" id="1_0e2sw"]
 [ext_resource type="Texture2D" uid="uid://cdnyn5ikkf8p0" path="res://tiles.png" id="1_kxtnu"]
@@ -6,6 +6,8 @@
 [ext_resource type="Script" path="res://camera.gd" id="2_217jn"]
 [ext_resource type="Script" path="res://select_rect.gd" id="2_dc58q"]
 [ext_resource type="PackedScene" uid="uid://bfiwb35evfer5" path="res://units/ant.tscn" id="4_qptlh"]
+[ext_resource type="Texture2D" uid="uid://sn8dm5dugstq" path="res://units/move_arrow.png" id="7_vfqsw"]
+[ext_resource type="Script" path="res://units/move_arrow.gd" id="8_8r7ts"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_hfb6l"]
 texture = ExtResource("1_kxtnu")
@@ -351,6 +353,49 @@ custom_data_layer_2/name = "is_grass"
 custom_data_layer_2/type = 1
 sources/1 = SubResource("TileSetAtlasSource_hfb6l")
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_lid52"]
+atlas = ExtResource("7_vfqsw")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qvvgv"]
+atlas = ExtResource("7_vfqsw")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6blog"]
+atlas = ExtResource("7_vfqsw")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rra2a"]
+atlas = ExtResource("7_vfqsw")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0trco"]
+atlas = ExtResource("7_vfqsw")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ach0t"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lid52")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qvvgv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6blog")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rra2a")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0trco")
+}],
+"loop": true,
+"name": &"default",
+"speed": 9.0
+}]
+
 [node name="world" type="Node2D"]
 texture_filter = 1
 script = ExtResource("1_0e2sw")
@@ -386,3 +431,9 @@ position = Vector2(-32, 32)
 
 [node name="select_rect" type="Node2D" parent="."]
 script = ExtResource("2_dc58q")
+
+[node name="move_arrow" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_ach0t")
+frame = 4
+frame_progress = 0.843738
+script = ExtResource("8_8r7ts")

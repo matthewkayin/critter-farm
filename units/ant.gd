@@ -1,6 +1,7 @@
 extends Node2D
 
 @onready var sprite = $sprite
+@onready var move_timeout_timer = $move_timeout_timer
 @onready var tilemap = get_node("../tilemap")
 
 enum SpriteAnimation {
@@ -14,6 +15,7 @@ const SPRITE_ANIMATION_NAME = {
 }
 
 const SPEED = 100.0
+const MOVE_TIMEOUT = 1.0
 
 var direction: Vector2 = Vector2.DOWN
 var sprite_animation = SpriteAnimation.IDLE
@@ -30,6 +32,11 @@ func _ready():
     target_cell = current_cell
     target_position = tilemap.map_to_local(target_cell)
     tilemap.astar_set_point_disabled(current_cell, true)
+
+    move_timeout_timer.timeout.connect(_on_move_timeout)
+
+func has_goal():
+    return is_moving or path.size() > 0
 
 func get_rect() -> Rect2:
     return Rect2(position - Vector2(11.5, 8.5), Vector2(26, 17))
@@ -75,9 +82,17 @@ func try_move_to_next_path_point():
     direction = current_cell.direction_to(path[0])
     if tilemap.astar_is_point_disabled(path[0]):
         is_moving = false
+        if move_timeout_timer.is_stopped():
+            move_timeout_timer.start(MOVE_TIMEOUT)
         return
+    move_timeout_timer.stop()
     target_cell = path[0]
     path.remove_at(0)
     target_position = tilemap.map_to_local(target_cell)
     tilemap.astar_set_point_disabled(target_cell, true)
     is_moving = true
+
+func _on_move_timeout():
+    # Possible TODO, have unit re-pathfind under certain conditions
+    path.clear()
+    is_moving = false

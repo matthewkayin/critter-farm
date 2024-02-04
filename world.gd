@@ -2,6 +2,7 @@ extends Node2D
 
 @onready var select_rect = $select_rect
 @onready var tilemap = $tilemap
+@onready var move_arrow = $move_arrow
 
 func _ready():
     pass
@@ -19,3 +20,14 @@ func _process(_delta):
                 if not unit.is_selected:
                     continue
                 unit.path_to(target_cell)
+                move_arrow.arrow_point(target_cell)
+    
+    if move_arrow.visible:
+        var should_hide_arrow = true
+        for unit in get_tree().get_nodes_in_group("units"):
+            if not unit.is_selected:
+                continue
+            if unit.has_goal():
+                should_hide_arrow = false
+        if should_hide_arrow:
+            move_arrow.hide()

@@ -111,3 +111,6 @@ script = ExtResource("1_wybch")
 material = SubResource("ShaderMaterial_uo60a")
 sprite_frames = SubResource("SpriteFrames_pmxu8")
 animation = &"idle_front"
+
+[node name="move_timeout_timer" type="Timer" parent="."]
+one_shot = true
