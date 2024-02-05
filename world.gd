@@ -14,20 +14,23 @@ func _process(_delta):
             unit.set_selected(is_selected)
 
     if Input.is_action_just_pressed("right_click"):
-        var target_cell = tilemap.get_mouse_cell()
+        var target_cell = tilemap.get_mouse_cell_astar()
         if target_cell != null:
+            # create action
+            var should_queue_action = Input.is_action_pressed("shift")
+            var action = {
+                "type": Unit.ActionType.MOVE,
+                "target": target_cell
+            }
+
+            # give action to each selected unit
             for unit in get_tree().get_nodes_in_group("units"):
                 if not unit.is_selected:
                     continue
-                unit.path_to(target_cell)
-                move_arrow.arrow_point(target_cell)
-    
-    if move_arrow.visible:
-        var should_hide_arrow = true
-        for unit in get_tree().get_nodes_in_group("units"):
-            if not unit.is_selected:
-                continue
-            if unit.has_goal():
-                should_hide_arrow = false
-        if should_hide_arrow:
-            move_arrow.hide()
+                if should_queue_action:
+                    unit.queue_action(action)
+                else:
+                    unit.give_action(action)
+
+            # apply visual effect for player feedback
+            move_arrow.arrow_point(target_cell)

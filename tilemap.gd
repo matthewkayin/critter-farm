@@ -27,10 +27,16 @@ func _ready():
 
     astar = AStar2D.new()
     for cell in get_used_cells(LAYER_TILE):
+        var cell_data = get_cell_tile_data(LAYER_TILE, cell)
+        if cell_data.get_custom_data("blocked"):
+            continue
+
         var point_id = astar.get_available_point_id()
         astar.add_point(point_id, Vector2(cell))
         astar_point_id_lookup[cell] = point_id
     for cell in get_used_cells(LAYER_TILE):
+        if not astar_point_id_lookup.has(cell):
+            continue
         for neighbor_offset in NEIGHBOR_OFFSET:
             var child = cell + neighbor_offset
             if not astar_point_id_lookup.has(child): 
@@ -95,6 +101,12 @@ func get_mouse_cell():
     return null
 
 # Pathfinding
+
+func get_mouse_cell_astar():
+    var mouse_cell = get_mouse_cell()
+    if mouse_cell == null or astar_point_id_lookup.has(mouse_cell):
+        return mouse_cell
+    return astar.get_point_position(astar.get_closest_point(mouse_cell))
 
 func astar_get_path(from: Vector2i, to: Vector2i):
     var from_id = astar_point_id_lookup[from]

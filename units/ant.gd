@@ -1,8 +1,13 @@
 extends Node2D
+class_name Unit
 
 @onready var sprite = $sprite
 @onready var move_timeout_timer = $move_timeout_timer
 @onready var tilemap = get_node("../tilemap")
+
+enum ActionType {
+    MOVE
+}
 
 enum SpriteAnimation {
     IDLE,
@@ -22,8 +27,10 @@ var sprite_animation = SpriteAnimation.IDLE
 var current_cell: Vector2
 var target_cell: Vector2
 var target_position: Vector2
-var is_moving = false
+var actions = []
+var current_action = null
 var path = []
+var is_moving = false
 var is_selected = false
 
 func _ready():
@@ -43,6 +50,8 @@ func get_rect() -> Rect2:
 
 func _process(delta):
     # Movement
+    if current_action == null and actions.size() != 0:
+        start_next_action()
     if not is_moving:
         try_move_to_next_path_point()
     if is_moving:
@@ -60,6 +69,7 @@ func _process(delta):
                 is_moving = false
                 try_move_to_next_path_point()
                 if not is_moving:
+                    current_action = null
                     break
 
     # Update Sprite
@@ -70,6 +80,23 @@ func _process(delta):
 func set_selected(value: bool):
     is_selected = value
     sprite.material.set_shader_parameter("show_outline", value)
+
+func give_action(action):
+    current_action = null
+    actions = [action]
+    start_next_action()
+
+func queue_action(action):
+    actions.push_back(action)
+    if current_action == null:
+        start_next_action()
+
+func start_next_action():
+    current_action = actions[0]
+    actions.remove_at(0)
+
+    if current_action.type == ActionType.MOVE:
+        path_to(current_action.target)
 
 func path_to(point: Vector2i):
     path = tilemap.astar_get_path(target_cell, point)

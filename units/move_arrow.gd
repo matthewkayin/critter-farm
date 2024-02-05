@@ -7,6 +7,10 @@ var play_count = 0
 
 func _ready():
     arrow_hide()
+    animation_finished.connect(_on_animation_finished)
+
+func _on_animation_finished():
+    arrow_hide()
 
 func arrow_hide():
     stop()
