@@ -5,6 +5,7 @@ const LAYER_TILE = 0
 const NEIGHBOR_OFFSET = [Vector2i(0, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 0)]
 
 @onready var selection = $selection
+@onready var outline = $outline
 
 var grass_tiles = {}
 var selecting = false
@@ -42,6 +43,20 @@ func _ready():
             if not astar_point_id_lookup.has(child): 
                 continue
             astar.connect_points(astar_point_id_lookup[cell], astar_point_id_lookup[child])
+
+func get_mouse_cell():
+    var mouse_position = get_global_mouse_position()
+    for cell in get_used_cells(LAYER_TILE):
+        var cell_center = map_to_local(cell)
+        var relative_mouse_position = mouse_position - cell_center
+        var mouse_inside_cell = (abs(relative_mouse_position.x) * 9.0) + (abs(relative_mouse_position.y) * 16.0) <= 9.0 * 16.0
+        if mouse_inside_cell:
+            return cell
+    return null
+
+func is_cell_water(cell: Vector2i):
+    var cell_atlas_coords = get_cell_atlas_coords(LAYER_TILE, cell)
+    return cell_atlas_coords == Vector2i(15, 2)
 
 func update_tile_edges():
     for cell in get_used_cells(LAYER_TILE):
@@ -90,27 +105,24 @@ func _process(_delta):
     else:
         selection.visible = false
 
-func get_mouse_cell():
-    var mouse_position = get_global_mouse_position()
-    for cell in get_used_cells(LAYER_TILE):
-        var cell_center = map_to_local(cell)
-        var relative_mouse_position = mouse_position - cell_center
-        var mouse_inside_cell = (abs(relative_mouse_position.x) * 9.0) + (abs(relative_mouse_position.y) * 16.0) <= 9.0 * 16.0
-        if mouse_inside_cell:
-            return cell
-    return null
-
 # Pathfinding
 
-func get_mouse_cell_astar():
-    var mouse_cell = get_mouse_cell()
-    if mouse_cell == null or astar_point_id_lookup.has(mouse_cell):
-        return mouse_cell
-    return astar.get_point_position(astar.get_closest_point(mouse_cell))
-
 func astar_get_path(from: Vector2i, to: Vector2i):
+    var destination = null
+    if astar_point_id_lookup.has(to):
+        destination = to
+    else:
+        for neighbor_offset in NEIGHBOR_OFFSET:
+            var child = to + neighbor_offset
+            if not astar_point_id_lookup.has(child):
+                continue
+            if destination == null or (from - child).length() < (from - destination).length():
+                destination = to + neighbor_offset
+        if destination == null:
+            destination = Vector2i(astar.get_point_position(astar.get_closest_point(to)))
+
     var from_id = astar_point_id_lookup[from]
-    var to_id = astar_point_id_lookup[to]
+    var to_id = astar_point_id_lookup[destination]
     var to_disabled = astar.is_point_disabled(to_id)
     if to_disabled:
         astar.set_point_disabled(to_id, false)
@@ -128,3 +140,12 @@ func astar_set_point_disabled(point: Vector2i, value: bool):
 
 func astar_is_point_disabled(point: Vector2i):
     return astar.is_point_disabled(astar_point_id_lookup[point])
+
+func display_outline(cell: Vector2i):
+    outline.position = map_to_local(cell)
+    outline.visible = true
+    for i in range(0, 3):
+        var tween = get_tree().create_tween()
+        tween.tween_interval(0.2)
+        await tween.finished
+        outline.visible = not outline.visible

@@ -6,24 +6,14 @@ class_name Unit
 @onready var tilemap = get_node("../tilemap")
 
 enum ActionType {
-    MOVE
-}
-
-enum SpriteAnimation {
-    IDLE,
-    WALK
-}
-
-const SPRITE_ANIMATION_NAME = {
-    SpriteAnimation.IDLE: "idle",
-    SpriteAnimation.WALK: "walk"
+    MOVE,
+    COLLECT_WATER
 }
 
 const SPEED = 100.0
 const MOVE_TIMEOUT = 1.0
 
 var direction: Vector2 = Vector2.DOWN
-var sprite_animation = SpriteAnimation.IDLE
 var current_cell: Vector2
 var target_cell: Vector2
 var target_position: Vector2
@@ -32,6 +22,7 @@ var current_action = null
 var path = []
 var is_moving = false
 var is_selected = false
+var is_holding = false
 
 func _ready():
     add_to_group("units")
@@ -68,13 +59,20 @@ func _process(delta):
                 current_cell = target_cell
                 is_moving = false
                 try_move_to_next_path_point()
+                # End movement
                 if not is_moving:
+                    if current_action.type == ActionType.COLLECT_WATER and current_cell.distance_to(current_action.target) == 1:
+                        direction = current_cell.direction_to(current_action.target)
+                        is_holding = true
                     current_action = null
                     break
 
     # Update Sprite
-    sprite_animation = SpriteAnimation.WALK if is_moving else SpriteAnimation.IDLE
-    sprite.play(SPRITE_ANIMATION_NAME[sprite_animation] + "_" + ("front" if direction == Vector2.DOWN or direction == Vector2.RIGHT else "back"))
+    var sprite_animation = "walk" if is_moving else "idle"
+    if is_holding:
+        sprite_animation = "hold_" + sprite_animation
+    sprite_animation += "_front" if direction == Vector2.DOWN or direction == Vector2.RIGHT else "_back"
+    sprite.play(sprite_animation) 
     sprite.flip_h = direction == Vector2.RIGHT or direction == Vector2.LEFT
 
 func set_selected(value: bool):
@@ -96,6 +94,8 @@ func start_next_action():
     actions.remove_at(0)
 
     if current_action.type == ActionType.MOVE:
+        path_to(current_action.target)
+    elif current_action.type == ActionType.COLLECT_WATER:
         path_to(current_action.target)
 
 func path_to(point: Vector2i):

@@ -1,10 +1,11 @@
-[gd_scene load_steps=17 format=3 uid="uid://bcfvjedew5uq8"]
+[gd_scene load_steps=18 format=3 uid="uid://bcfvjedew5uq8"]
 
 [ext_resource type="Script" path="res://world.gd" id="1_0e2sw"]
 [ext_resource type="Texture2D" uid="uid://cdnyn5ikkf8p0" path="res://tiles.png" id="1_kxtnu"]
 [ext_resource type="Script" path="res://tilemap.gd" id="2_27pqt"]
 [ext_resource type="Script" path="res://camera.gd" id="2_217jn"]
 [ext_resource type="Script" path="res://select_rect.gd" id="2_dc58q"]
+[ext_resource type="Texture2D" uid="uid://kph5fn3fjou3" path="res://tile_outline.png" id="4_dm3yh"]
 [ext_resource type="PackedScene" uid="uid://bfiwb35evfer5" path="res://units/ant.tscn" id="4_qptlh"]
 [ext_resource type="Texture2D" uid="uid://sn8dm5dugstq" path="res://units/move_arrow.png" id="7_vfqsw"]
 [ext_resource type="Script" path="res://units/move_arrow.gd" id="8_8r7ts"]
@@ -421,6 +422,13 @@ centered = false
 offset = Vector2(-16, -20)
 region_enabled = true
 region_rect = Rect2(544, 128, 32, 32)
+
+[node name="outline" type="Sprite2D" parent="tilemap"]
+visible = false
+z_index = 1
+y_sort_enabled = true
+texture = ExtResource("4_dm3yh")
+region_rect = Rect2(736, 128, 32, 32)
 
 [node name="camera" type="Camera2D" parent="."]
 position_smoothing_enabled = true

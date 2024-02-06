@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://by0yucgxkxun8"]
+
+[ext_resource type="Shader" path="res://watered.gdshader" id="1_dhbxe"]
+[ext_resource type="Texture2D" uid="uid://cdnyn5ikkf8p0" path="res://tiles.png" id="2_n6jcu"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_haadf"]
+shader = ExtResource("1_dhbxe")
+shader_parameter/progress = 0.0
+shader_parameter/region_rect_pos = Vector2(736, 128)
+
+[node name="grass_watered_transition" type="Sprite2D"]
+texture_filter = 1
+material = SubResource("ShaderMaterial_haadf")
+texture = ExtResource("2_n6jcu")
+region_enabled = true
+region_rect = Rect2(736, 128, 32, 32)
