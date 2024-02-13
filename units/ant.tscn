@@ -1,8 +1,9 @@
-[gd_scene load_steps=30 format=3 uid="uid://bfiwb35evfer5"]
+[gd_scene load_steps=36 format=3 uid="uid://bfiwb35evfer5"]
 
 [ext_resource type="Script" path="res://units/ant.gd" id="1_wybch"]
 [ext_resource type="Shader" path="res://units/outline.gdshader" id="2_6gjvs"]
 [ext_resource type="Texture2D" uid="uid://bv6db0s7rq4ya" path="res://units/ant.png" id="2_hbumk"]
+[ext_resource type="Texture2D" uid="uid://dkqvoe0msoeol" path="res://units/droplet.png" id="4_rxpmo"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_uo60a"]
 resource_local_to_scene = true
@@ -221,6 +222,42 @@ animations = [{
 "speed": 10.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_mvj7p"]
+atlas = ExtResource("4_rxpmo")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_03hlo"]
+atlas = ExtResource("4_rxpmo")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6us21"]
+atlas = ExtResource("4_rxpmo")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_85rlx"]
+atlas = ExtResource("4_rxpmo")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_krafx"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mvj7p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_03hlo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6us21")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_85rlx")
+}],
+"loop": true,
+"name": &"water",
+"speed": 6.0
+}]
+
 [node name="ant" type="Node2D"]
 texture_filter = 1
 script = ExtResource("1_wybch")
@@ -228,7 +265,13 @@ script = ExtResource("1_wybch")
 [node name="sprite" type="AnimatedSprite2D" parent="."]
 material = SubResource("ShaderMaterial_uo60a")
 sprite_frames = SubResource("SpriteFrames_pmxu8")
-animation = &"hold_idle_back"
+animation = &"hold_walk_front"
+frame_progress = 0.998763
+
+[node name="item_sprite" type="AnimatedSprite2D" parent="."]
+position = Vector2(-5, -11)
+sprite_frames = SubResource("SpriteFrames_krafx")
+animation = &"water"
 
 [node name="move_timeout_timer" type="Timer" parent="."]
 one_shot = true

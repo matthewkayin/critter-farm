@@ -1,5 +1,7 @@
 extends TileMap
 
+const ATLAS_COORDS_WATER = Vector2i(14, 0)
+
 const LAYER_TILE = 0
 
 const NEIGHBOR_OFFSET = [Vector2i(0, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 0)]
@@ -56,7 +58,7 @@ func get_mouse_cell():
 
 func is_cell_water(cell: Vector2i):
     var cell_atlas_coords = get_cell_atlas_coords(LAYER_TILE, cell)
-    return cell_atlas_coords == Vector2i(15, 2)
+    return cell_atlas_coords == ATLAS_COORDS_WATER
 
 func update_tile_edges():
     for cell in get_used_cells(LAYER_TILE):
